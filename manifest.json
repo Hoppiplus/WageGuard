@@ -1,0 +1,25 @@
+{
+  "name": "WageGuard – UAE Employment Rights Helper",
+  "short_name": "WageGuard",
+  "description": "Your ultimate personal employment rights assistant in the UAE. Instantly check contract validity, gratuity entitlement, and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "utilities", "business"],
+  "icons": [
+    {
+      "src": "https://img.icons8.com/color/192/shield.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://img.icons8.com/color/512/shield.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

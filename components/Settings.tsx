@@ -4,12 +4,14 @@ import { useSubscription } from '../contexts/SubscriptionContext';
 import { SUPPORTED_LANGUAGES } from '../translations';
 import { Globe, Shield, Check, ChevronRight, Key, Copy, Unlock, Lock, AlertCircle, Crown, Clock } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useHaptic } from '../contexts/HapticContext';
 
 const ADMIN_PIN = "198319"; // <--- YOUR SECRET PIN
 
 const Settings: React.FC = () => {
   const { language, setLanguage, t, dir } = useLanguage();
   const { isPremium, daysRemaining, setShowPaywall } = useSubscription();
+  const { soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled, triggerHaptic } = useHaptic();
   const navigate = useNavigate();
   
   // Secret Admin Mode Logic
@@ -109,6 +111,52 @@ const Settings: React.FC = () => {
               {language === lang.code && <Check className="w-5 h-5 text-indigo-600" />}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Touch & Sound Preference Panel */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-slate-100 bg-slate-50 flex items-center">
+          <Shield className="w-5 h-5 text-indigo-600 mr-3 rtl:ml-3" />
+          <h3 className="font-bold text-slate-800">Touch & Sound Preferences</h3>
+        </div>
+        <div className="divide-y divide-slate-100">
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-bold text-slate-800 text-sm">Acoustic Playback</p>
+              <p className="text-xs text-slate-400">Play low-latency audio chimes during taps and wizards</p>
+            </div>
+            <button 
+              onClick={() => {
+                const newVal = !soundEnabled;
+                setSoundEnabled(newVal);
+                if (newVal) {
+                  triggerHaptic('light-tap');
+                }
+              }}
+              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${soundEnabled ? 'bg-indigo-600' : 'bg-slate-300'}`}
+            >
+              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${soundEnabled ? 'translate-x-6' : 'translate-x-0'}`}></div>
+            </button>
+          </div>
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-bold text-slate-800 text-sm">Tactile Vibration</p>
+              <p className="text-xs text-slate-400">Trigger physical micro-vibration feedback on mobile steps</p>
+            </div>
+            <button 
+              onClick={() => {
+                const newVal = !vibrationEnabled;
+                setVibrationEnabled(newVal);
+                if (newVal) {
+                  triggerHaptic('tap');
+                }
+              }}
+              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${vibrationEnabled ? 'bg-indigo-600' : 'bg-slate-300'}`}
+            >
+              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${vibrationEnabled ? 'translate-x-6' : 'translate-x-0'}`}></div>
+            </button>
+          </div>
         </div>
       </div>
 

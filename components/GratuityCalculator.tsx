@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import { Calculator, Calendar, AlertCircle, ChevronLeft, Coins, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useHaptic } from '../contexts/HapticContext';
 
 const GratuityCalculator: React.FC = () => {
   const { t, dir } = useLanguage();
+  const { triggerHaptic } = useHaptic();
   const [basicSalary, setBasicSalary] = useState<number>(0);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -50,6 +52,7 @@ const GratuityCalculator: React.FC = () => {
     setResult(gratuity);
     setBreakdown(explanation);
     setTenureStr(`${years.toFixed(2)} Years`);
+    triggerHaptic('success');
   };
 
   return (

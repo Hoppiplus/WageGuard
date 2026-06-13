@@ -6,6 +6,7 @@ import { Case, EmployerType, RoadmapTask } from '../types';
 import { Loader2, CheckCircle, XCircle, ChevronRight, AlertCircle, Building2, HelpCircle, Phone, Globe, MessageSquare, Copy, Lock, Briefcase, Info } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSubscription } from '../contexts/SubscriptionContext';
+import { useHaptic } from '../contexts/HapticContext';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -17,6 +18,7 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const { isPremium, setShowPaywall } = useSubscription();
+  const { triggerHaptic } = useHaptic();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
@@ -51,13 +53,16 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
 
   const handleDiagnose = async () => {
     if (!formData.description) return;
+    triggerHaptic('tap');
     setLoading(true);
     try {
       const result = await diagnoseCase(formData.description, formData.issues, formData.employerType, formData.freezone, language);
       setAiResult(result);
+      triggerHaptic('success');
       setStep(3);
     } catch (error) {
       console.error(error);
+      triggerHaptic('warn');
       setStep(3);
     } finally {
       setLoading(false);
@@ -68,6 +73,7 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
       if (aiResult?.suggestedEmail) {
           const text = `Subject: ${aiResult.suggestedEmail.subject}\n\n${aiResult.suggestedEmail.body}`;
           navigator.clipboard.writeText(text);
+          triggerHaptic('success');
           setEmailCopied(true);
           setTimeout(() => setEmailCopied(false), 2000);
       }
@@ -104,6 +110,7 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
       roadmap: roadmapTasks.length > 0 ? roadmapTasks : undefined
     };
     onSave(newCase);
+    triggerHaptic('success');
     navigate(`/case/${newCase.id}`);
   };
 
@@ -140,7 +147,7 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
               ].map((type) => (
                 <button
                   key={type.id}
-                  onClick={() => setFormData({...formData, employerType: type.id as EmployerType, freezone: ''})}
+                  onClick={() => { triggerHaptic('light-tap'); setFormData({...formData, employerType: type.id as EmployerType, freezone: ''}); }}
                   className={`relative overflow-hidden group py-6 px-4 rounded-3xl border-2 flex flex-col items-center justify-center text-center transition-all duration-300 ${
                     formData.employerType === type.id 
                       ? 'bg-royal-50 border-royal-500 text-royal-900 shadow-lg shadow-royal-500/10 scale-[1.02]' 
@@ -189,8 +196,8 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
               {ISSUE_TYPES.map(issue => (
                 <button
                   key={issue}
-                  onClick={() => toggleIssue(issue)}
-                  className={`relative text-left rtl:text-right px-5 py-4 rounded-2xl border transition-all duration-200 text-sm font-bold flex items-center justify-between group ${
+                  onClick={() => { triggerHaptic('light-tap'); toggleIssue(issue); }}
+                  className={`text-left rtl:text-right px-5 py-4 rounded-2xl border transition-all duration-200 text-sm font-bold flex items-center justify-between group ${
                     formData.issues.includes(issue)
                       ? 'bg-royal-900 text-white border-royal-900 shadow-md transform scale-[1.01]'
                       : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'
@@ -205,7 +212,7 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
           
           <button 
             disabled={formData.issues.length === 0 || (formData.employerType === 'Freezone' && !formData.freezone)}
-            onClick={() => setStep(2)}
+            onClick={() => { triggerHaptic('tap'); setStep(2); }}
             className="w-full bg-gradient-to-r from-royal-600 to-royal-800 disabled:from-slate-200 disabled:to-slate-300 disabled:text-slate-400 text-white font-bold py-5 rounded-2xl mt-4 hover:shadow-xl hover:shadow-royal-600/20 hover:scale-[1.01] transition-all active:scale-95 flex justify-center items-center text-lg"
           >
             Continue <ChevronRight className="w-6 h-6 ml-2 rtl:rotate-180" />
@@ -241,7 +248,7 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
 
           <div className="flex space-x-3">
               <button 
-                onClick={() => setStep(1)}
+                onClick={() => { triggerHaptic('tap'); setStep(1); }}
                 className="px-6 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition"
               >
                   Back

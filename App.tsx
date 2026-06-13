@@ -17,11 +17,48 @@ import AdminDashboard from './components/AdminDashboard';
 import SubscriptionDashboard from './components/SubscriptionDashboard';
 import { Case } from './types';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { SubscriptionProvider } from './contexts/SubscriptionContext';
+import { SubscriptionProvider, useSubscription } from './contexts/SubscriptionContext';
+import { HapticProvider } from './contexts/HapticContext';
 
 const AppContent: React.FC = () => {
   const [cases, setCases] = useState<Case[]>([]);
   const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false);
+  const { isPremium } = useSubscription();
+
+  // Register Service Worker & update premium state in sw.js
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      const handleLoad = () => {
+        navigator.serviceWorker.register('/sw.js').then((registration) => {
+          console.log('[Service Worker] Registered successfully:', registration.scope);
+          if (registration.active) {
+            registration.active.postMessage({ type: 'SET_PREMIUM', isPremium });
+          }
+        }).catch((err) => {
+          console.error('[Service Worker] Registration failed:', err);
+        });
+      };
+
+      // Register or sync immediately if window already loaded
+      if (document.readyState === 'complete') {
+        handleLoad();
+      } else {
+        window.addEventListener('load', handleLoad);
+        return () => window.removeEventListener('load', handleLoad);
+      }
+    }
+  }, []);
+
+  // Instantly dispatch subscription status changes to Service Worker
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        if (registration.active) {
+          registration.active.postMessage({ type: 'SET_PREMIUM', isPremium });
+        }
+      });
+    }
+  }, [isPremium]);
 
   // Load from local storage on mount
   useEffect(() => {
@@ -86,7 +123,9 @@ const App: React.FC = () => {
   return (
     <SubscriptionProvider>
       <LanguageProvider>
-        <AppContent />
+        <HapticProvider>
+          <AppContent />
+        </HapticProvider>
       </LanguageProvider>
     </SubscriptionProvider>
   );

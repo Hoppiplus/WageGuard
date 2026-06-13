@@ -23,6 +23,30 @@ async function startServer() {
     app.use(express.static(path.join(__dirname, 'dist')));
   }
 
+  // Route to explicitly serve the PWA manifest.json file
+  app.get('/manifest.json', async (req, res) => {
+    try {
+      const manifestPath = path.join(__dirname, 'manifest.json');
+      const manifestData = await fs.promises.readFile(manifestPath, 'utf8');
+      res.status(200).set({ 'Content-Type': 'application/json' }).end(manifestData);
+    } catch (e) {
+      console.error('Error serving manifest.json:', e);
+      res.status(500).end(e.message);
+    }
+  });
+
+  // Route to explicitly serve the sw.js Service Worker file
+  app.get('/sw.js', async (req, res) => {
+    try {
+      const swPath = path.join(__dirname, 'sw.js');
+      const swData = await fs.promises.readFile(swPath, 'utf8');
+      res.status(200).set({ 'Content-Type': 'application/javascript' }).end(swData);
+    } catch (e) {
+      console.error('Error serving sw.js:', e);
+      res.status(500).end(e.message);
+    }
+  });
+
   // Handle all other routes by serving index.html with environment variable injection
   app.get('*', async (req, res) => {
     try {

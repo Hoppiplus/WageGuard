@@ -14,43 +14,42 @@ const CaseList: React.FC<Props> = ({ cases, onDelete }) => {
 
   if (cases.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-6 text-center px-4 animate-fade-in-up">
-        {/* Modern Empty State */}
-        <div className="bg-white p-6 rounded-[2rem] mb-6 shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden w-full max-w-sm group">
-          <div className="absolute -top-24 -right-24 w-40 h-40 bg-royal-50 rounded-full blur-3xl opacity-60 group-hover:scale-110 transition-transform duration-700"></div>
-          <div className="absolute -bottom-24 -left-24 w-40 h-40 bg-wage-50 rounded-full blur-3xl opacity-60 group-hover:scale-110 transition-transform duration-700"></div>
+      <div className="flex flex-col items-center justify-center py-2.5 text-center px-4 animate-fade-in-up">
+        {/* Modern Compact Empty State */}
+        <div className="bg-white p-4.5 rounded-[1.6rem] mb-4.5 shadow-xl shadow-slate-200/40 border border-slate-100 relative overflow-hidden w-full max-w-sm group">
+          <div className="absolute -top-24 -right-24 w-32 h-32 bg-royal-50 rounded-full blur-2xl opacity-60"></div>
           
-          <div className="bg-gradient-to-br from-royal-50 to-indigo-50 p-4 rounded-2xl inline-block mb-4 relative z-10 shadow-inner">
-            <ShieldAlert className="w-10 h-10 text-royal-600 drop-shadow-sm" strokeWidth={1.5} />
+          <div className="bg-gradient-to-br from-royal-50 to-indigo-50 p-2.5 rounded-xl inline-block mb-2 relative z-10 shadow-inner">
+            <ShieldAlert className="w-7 h-7 text-royal-600 drop-shadow-sm" strokeWidth={1.5} />
           </div>
           
-          <h2 className="text-xl font-extrabold text-slate-900 mb-2 tracking-tight">{t('welcome')}</h2>
-          <p className="text-slate-500 leading-relaxed text-xs font-medium px-4">
+          <h2 className="text-lg font-black text-slate-905 mb-1.5 tracking-tight">{t('welcome')}</h2>
+          <p className="text-slate-500 leading-normal text-[11px] font-semibold px-2">
             Your personal employment rights assistant. Start by describing your situation to check your eligibility.
           </p>
         </div>
         
-        <div className="space-y-3 w-full max-w-xs relative z-10">
+        <div className="space-y-2.5 w-full max-w-xs relative z-10">
             <Link 
             to="/new" 
-            className="w-full bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-slate-900/20 hover:bg-royal-900 hover:scale-[1.02] hover:shadow-royal-900/30 active:scale-95 transition-all duration-300 flex items-center justify-center group"
+            className="w-full bg-slate-900 text-white px-6 py-3 rounded-xl font-bold shadow-md shadow-slate-900/15 hover:bg-royal-905 hover:scale-[1.01] active:scale-95 transition-all duration-300 flex items-center justify-center group text-xs"
             >
             {t('nav_new')} 
-            <div className="bg-white/10 rounded-full p-1 ml-3 group-hover:translate-x-1 group-hover:bg-white/20 transition-all">
-                <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" strokeWidth={3} />
+            <div className="bg-white/10 rounded-full p-0.5 ml-2.5 group-hover:translate-x-0.5 group-hover:bg-white/20 transition-all">
+                <ChevronRight className="w-3 h-3 rtl:rotate-180" strokeWidth={3} />
             </div>
             </Link>
             
             <div className="grid grid-cols-2 gap-2">
-                <Link to="/gratuity" className="group w-full block bg-white border border-slate-200 text-slate-600 py-3 rounded-2xl font-bold text-[10px] hover:border-wage-200 hover:shadow-md hover:shadow-wage-100 transition-all flex flex-col items-center justify-center text-center">
-                     <Calculator className="w-5 h-5 mb-1 text-wage-500 group-hover:scale-110 transition-transform" /> {t('tool_gratuity')}
+                <Link to="/gratuity" className="group w-full block bg-white border border-slate-200 text-slate-600 py-2.5 rounded-xl font-bold text-[10px] hover:border-wage-200 hover:shadow-md hover:shadow-wage-100 transition-all flex flex-col items-center justify-center text-center">
+                     <Calculator className="w-4.5 h-4.5 mb-1 text-wage-500 group-hover:scale-105 transition-transform" /> {t('tool_gratuity')}
                 </Link>
-                <Link to="/offer-check" className="group w-full block bg-white border border-slate-200 text-slate-600 py-3 rounded-2xl font-bold text-[10px] hover:border-royal-200 hover:shadow-md hover:shadow-royal-100 transition-all flex flex-col items-center justify-center text-center">
-                     <Building2 className="w-5 h-5 mb-1 text-royal-500 group-hover:scale-110 transition-transform" /> {t('tool_offer')}
+                <Link to="/offer-check" className="group w-full block bg-white border border-slate-200 text-slate-600 py-2.5 rounded-xl font-bold text-[10px] hover:border-royal-200 hover:shadow-md hover:shadow-royal-100 transition-all flex flex-col items-center justify-center text-center">
+                     <Building2 className="w-4.5 h-4.5 mb-1 text-royal-500 group-hover:scale-105 transition-transform" /> {t('tool_offer')}
                 </Link>
             </div>
-             <Link to="/contract-review" className="group w-full block bg-gradient-to-r from-amber-50 to-white border border-amber-100 text-amber-900 py-3 rounded-2xl font-bold text-xs hover:shadow-md transition-all flex items-center justify-center text-center">
-                <FileSearch className="w-4 h-4 mr-2 text-amber-600" /> {t('tool_contract')} <span className="ml-1 bg-amber-200 text-[10px] px-1.5 rounded text-amber-800">PRO</span>
+             <Link to="/contract-review" className="group w-full block bg-gradient-to-r from-amber-50 to-white border border-amber-100 text-amber-900 py-2 rounded-xl font-bold text-[11px] hover:shadow-md transition-all flex items-center justify-center text-center">
+                <FileSearch className="w-3.5 h-3.5 mr-1.5 text-amber-600" /> {t('tool_contract')} <span className="ml-1 bg-amber-200 text-[9px] px-1.5 py-0.5 rounded text-amber-800">PRO</span>
             </Link>
         </div>
       </div>

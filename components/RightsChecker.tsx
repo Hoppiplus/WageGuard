@@ -110,12 +110,12 @@ const RightsChecker: React.FC = () => {
                </p>
             </div>
 
-            <div>
+             <div>
                <h4 className="font-bold text-slate-800 mb-3 flex items-center">
                    <FileText className="w-5 h-5 mr-2 text-slate-500" /> Prepare These Documents
                </h4>
                <ul className="space-y-2">
-                   {result.prep.map((item, i) => (
+                   {(result.prep || []).map((item, i) => (
                        <li key={i} className="flex items-center text-sm text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100">
                            <CheckCircle className="w-4 h-4 mr-3 text-emerald-500 flex-shrink-0" />
                            {item}
@@ -129,7 +129,7 @@ const RightsChecker: React.FC = () => {
                    <AlertTriangle className="w-5 h-5 mr-2" /> Critical Warnings
                </h4>
                <ul className="space-y-2">
-                   {result.warnings.map((item, i) => (
+                   {(result.warnings || []).map((item, i) => (
                        <li key={i} className="flex items-start text-sm text-red-700 bg-red-50 p-3 rounded-xl border border-red-100">
                            <span className="font-bold mr-2 text-red-500">•</span>
                            {item}
