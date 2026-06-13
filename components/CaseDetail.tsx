@@ -5,6 +5,7 @@ import { Case, RoadmapTask, TimelineEvent, EvidenceItem } from '../types';
 import { generateRoadmap, analyzeEvidence } from '../services/geminiService';
 import { MessageSquare, FileText, Send, PhoneCall, LayoutDashboard, ChevronLeft, CheckCircle, XCircle, Calendar, CheckSquare, Upload, Loader2, Printer, Shield, Copy, FileSignature } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { exportCaseToPDF } from '../lib/pdfExporter';
 import ChatInterface from './ChatInterface';
 import EvidenceAnalyzer from './EvidenceAnalyzer';
 import ReplyGenerator from './ReplyGenerator';
@@ -101,6 +102,10 @@ const CaseDetail: React.FC<Props> = ({ cases, onUpdate }) => {
 
   const handlePrint = () => {
       window.print();
+  }
+
+  const handleExportPDF = () => {
+      exportCaseToPDF(currentCase, t);
   }
 
   const renderTabContent = () => {
@@ -349,13 +354,23 @@ const CaseDetail: React.FC<Props> = ({ cases, onUpdate }) => {
             </div>
         </div>
         
-        <button 
-            onClick={handlePrint}
-            className="flex items-center text-xs font-bold bg-white border border-slate-200 text-slate-600 px-3 py-2 rounded-xl hover:bg-slate-50"
-        >
-            <Printer className="w-4 h-4 mr-2" />
-            <span className="hidden md:inline">{t('print_report')}</span>
-        </button>
+        <div className="flex items-center space-x-2">
+          <button 
+              onClick={handleExportPDF}
+              className="flex items-center text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-200 cursor-pointer"
+          >
+              <FileText className="w-4 h-4 mr-1.5" />
+              <span>Export PDF</span>
+          </button>
+          
+          <button 
+              onClick={handlePrint}
+              className="flex items-center text-xs font-bold bg-white border border-slate-200 text-slate-600 px-3 py-2 rounded-xl hover:bg-slate-50"
+          >
+              <Printer className="w-4 h-4 mr-2" />
+              <span className="hidden md:inline">{t('print_report')}</span>
+          </button>
+        </div>
       </div>
 
       {/* Print Header (Only shows on print) */}

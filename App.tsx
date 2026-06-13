@@ -19,11 +19,15 @@ import { Case } from './types';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { SubscriptionProvider, useSubscription } from './contexts/SubscriptionContext';
 import { HapticProvider } from './contexts/HapticContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { BiometricProvider, useBiometric } from './contexts/BiometricContext';
+import { BiometricFingerprintLock } from './components/BiometricFingerprintLock';
 
 const AppContent: React.FC = () => {
   const [cases, setCases] = useState<Case[]>([]);
   const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false);
   const { isPremium } = useSubscription();
+  const { isBiometricEnabled, isBiometricAuthenticated } = useBiometric();
 
   // Register Service Worker & update premium state in sw.js
   useEffect(() => {
@@ -94,6 +98,10 @@ const AppContent: React.FC = () => {
     setCases(cases.filter(c => c.id !== id));
   };
 
+  if (isBiometricEnabled && !isBiometricAuthenticated) {
+    return <BiometricFingerprintLock />;
+  }
+
   return (
     <HashRouter>
       {!acceptedDisclaimer && <DisclaimerModal onAccept={handleDisclaimerAccept} />}
@@ -124,7 +132,11 @@ const App: React.FC = () => {
     <SubscriptionProvider>
       <LanguageProvider>
         <HapticProvider>
-          <AppContent />
+          <ThemeProvider>
+            <BiometricProvider>
+              <AppContent />
+            </BiometricProvider>
+          </ThemeProvider>
         </HapticProvider>
       </LanguageProvider>
     </SubscriptionProvider>

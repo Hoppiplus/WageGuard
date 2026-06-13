@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Case } from '../types';
 import { ChevronRight, Trash2, Calendar, ShieldAlert, Calculator, Building2, ArrowRight, Activity, FileSearch } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { BottomSheet } from './BottomSheet';
 
 interface Props {
   cases: Case[];
@@ -11,20 +12,21 @@ interface Props {
 
 const CaseList: React.FC<Props> = ({ cases, onDelete }) => {
   const { t } = useLanguage();
+  const [caseToDelete, setCaseToDelete] = useState<string | null>(null);
 
   if (cases.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-2.5 text-center px-4 animate-fade-in-up">
+      <div className="flex flex-col items-center justify-center py-4 text-center px-4 animate-fade-in-up">
         {/* Modern Compact Empty State */}
-        <div className="bg-white p-4.5 rounded-[1.6rem] mb-4.5 shadow-xl shadow-slate-200/40 border border-slate-100 relative overflow-hidden w-full max-w-sm group">
-          <div className="absolute -top-24 -right-24 w-32 h-32 bg-royal-50 rounded-full blur-2xl opacity-60"></div>
+        <div className="bg-white p-6 rounded-[1.6rem] mb-5 shadow-xl shadow-slate-200/40 border border-slate-100 relative overflow-hidden w-full max-w-sm flex flex-col items-center justify-center group">
+          <div className="absolute -top-20 -right-20 w-32 h-32 bg-royal-50 rounded-full blur-2xl opacity-60"></div>
           
-          <div className="bg-gradient-to-br from-royal-50 to-indigo-50 p-2.5 rounded-xl inline-block mb-2 relative z-10 shadow-inner">
-            <ShieldAlert className="w-7 h-7 text-royal-600 drop-shadow-sm" strokeWidth={1.5} />
+          <div className="bg-gradient-to-br from-royal-50 to-indigo-50 p-3 rounded-2xl flex items-center justify-center mb-3 relative z-10 shadow-inner w-12 h-12">
+            <ShieldAlert className="w-6 h-6 text-royal-600 drop-shadow-sm" strokeWidth={1.5} />
           </div>
           
-          <h2 className="text-lg font-black text-slate-905 mb-1.5 tracking-tight">{t('welcome')}</h2>
-          <p className="text-slate-500 leading-normal text-[11px] font-semibold px-2">
+          <h2 className="text-lg font-black text-slate-900 mb-2 tracking-tight relative z-10">{t('welcome')}</h2>
+          <p className="text-slate-500 leading-normal text-[11px] font-semibold px-4 relative z-10">
             Your personal employment rights assistant. Start by describing your situation to check your eligibility.
           </p>
         </div>
@@ -150,8 +152,12 @@ const CaseList: React.FC<Props> = ({ cases, onDelete }) => {
                         
                         <div className="flex items-center">
                             <button 
-                                onClick={(e) => { e.preventDefault(); onDelete(c.id); }}
-                                className="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors mr-2"
+                                onClick={(e) => { 
+                                    e.preventDefault(); 
+                                    e.stopPropagation(); 
+                                    setCaseToDelete(c.id); 
+                                }}
+                                className="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors mr-2 cursor-pointer relative z-10"
                                 title="Delete Case"
                             >
                                 <Trash2 className="w-4 h-4" />
@@ -167,6 +173,42 @@ const CaseList: React.FC<Props> = ({ cases, onDelete }) => {
         ))}
         </div>
       </div>
+
+      <BottomSheet
+        isOpen={caseToDelete !== null}
+        onClose={() => setCaseToDelete(null)}
+        title="Confirm Case Deletion"
+      >
+        <div className="space-y-6 pt-2">
+          <div className="flex items-start bg-red-50 dark:bg-red-950/20 p-4 rounded-2xl border border-red-100 dark:border-red-900/30 text-red-800 dark:text-red-400 text-left">
+            <ShieldAlert className="w-6 h-6 mr-3 flex-shrink-0 text-red-600 dark:text-red-500" strokeWidth={1.5} />
+            <p className="text-xs font-semibold leading-relaxed">
+              This action is permanent. Your entire claim diary, strategic analysis roadmap, employer letters, and all uploaded visual evidence files will be instantly and permanently deleted from local containment. This action cannot be reversed.
+            </p>
+          </div>
+          
+          <div className="flex flex-col space-y-2.5">
+            <button
+              onClick={() => {
+                if (caseToDelete) {
+                  onDelete(caseToDelete);
+                  setCaseToDelete(null);
+                }
+              }}
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-2xl transition duration-200 text-xs shadow-md shadow-red-500/10 cursor-pointer"
+            >
+              Delete Permanently
+            </button>
+            
+            <button
+              onClick={() => setCaseToDelete(null)}
+              className="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold py-4 rounded-2xl transition duration-200 text-xs cursor-pointer"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </BottomSheet>
     </div>
   );
 };

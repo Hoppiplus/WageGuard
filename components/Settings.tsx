@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { SUPPORTED_LANGUAGES } from '../translations';
-import { Globe, Shield, Check, ChevronRight, Key, Copy, Unlock, Lock, AlertCircle, Crown, Clock } from 'lucide-react';
+import { Globe, Shield, Check, ChevronRight, Key, Copy, Unlock, Lock, AlertCircle, Crown, Clock, Eye, Sliders } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useHaptic } from '../contexts/HapticContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useBiometric } from '../contexts/BiometricContext';
 
 const ADMIN_PIN = "198319"; // <--- YOUR SECRET PIN
 
@@ -12,6 +14,8 @@ const Settings: React.FC = () => {
   const { language, setLanguage, t, dir } = useLanguage();
   const { isPremium, daysRemaining, setShowPaywall } = useSubscription();
   const { soundEnabled, setSoundEnabled, vibrationEnabled, setVibrationEnabled, triggerHaptic } = useHaptic();
+  const { isDarkMode, toggleDarkMode } = useTheme();
+  const { isBiometricEnabled, setBiometricEnabled, authenticateBiometrics } = useBiometric();
   const navigate = useNavigate();
   
   // Secret Admin Mode Logic
@@ -114,17 +118,17 @@ const Settings: React.FC = () => {
         </div>
       </div>
 
-      {/* Touch & Sound Preference Panel */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 bg-slate-50 flex items-center">
-          <Shield className="w-5 h-5 text-indigo-600 mr-3 rtl:ml-3" />
-          <h3 className="font-bold text-slate-800">Touch & Sound Preferences</h3>
+      {/* Touch, Sound & Display Preferences */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex items-center">
+          <Sliders className="w-5 h-5 text-indigo-600 dark:text-indigo-400 mr-3 rtl:ml-3 rtl:mr-0" />
+          <h3 className="font-bold text-slate-800 dark:text-white">Preferences & Security</h3>
         </div>
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-slate-100 dark:divide-slate-800">
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <p className="font-bold text-slate-800 text-sm">Acoustic Playback</p>
-              <p className="text-xs text-slate-400">Play low-latency audio chimes during taps and wizards</p>
+              <p className="font-bold text-slate-800 dark:text-white text-sm">Acoustic Playback</p>
+              <p className="text-xs text-slate-400 dark:text-slate-400">Play low-latency audio chimes during taps and wizards</p>
             </div>
             <button 
               onClick={() => {
@@ -134,15 +138,15 @@ const Settings: React.FC = () => {
                   triggerHaptic('light-tap');
                 }
               }}
-              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${soundEnabled ? 'bg-indigo-600' : 'bg-slate-300'}`}
+              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${soundEnabled ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'}`}
             >
               <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${soundEnabled ? 'translate-x-6' : 'translate-x-0'}`}></div>
             </button>
           </div>
           <div className="px-6 py-4 flex items-center justify-between">
             <div>
-              <p className="font-bold text-slate-800 text-sm">Tactile Vibration</p>
-              <p className="text-xs text-slate-400">Trigger physical micro-vibration feedback on mobile steps</p>
+              <p className="font-bold text-slate-800 dark:text-white text-sm">Tactile Vibration</p>
+              <p className="text-xs text-slate-400 dark:text-slate-400">Trigger physical micro-vibration feedback on mobile steps</p>
             </div>
             <button 
               onClick={() => {
@@ -152,9 +156,47 @@ const Settings: React.FC = () => {
                   triggerHaptic('tap');
                 }
               }}
-              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${vibrationEnabled ? 'bg-indigo-600' : 'bg-slate-300'}`}
+              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${vibrationEnabled ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'}`}
             >
               <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${vibrationEnabled ? 'translate-x-6' : 'translate-x-0'}`}></div>
+            </button>
+          </div>
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-bold text-slate-800 dark:text-white text-sm">Dark Theme Mode</p>
+              <p className="text-xs text-slate-400 dark:text-slate-400">Render eye-safe high-contrast dark color palette</p>
+            </div>
+            <button 
+              onClick={() => {
+                triggerHaptic('tap');
+                toggleDarkMode();
+              }}
+              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isDarkMode ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'}`}
+            >
+              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${isDarkMode ? 'translate-x-6' : 'translate-x-0'}`}></div>
+            </button>
+          </div>
+          <div className="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p className="font-bold text-slate-800 dark:text-white text-sm">Biometric Security Lock</p>
+              <p className="text-xs text-slate-400 dark:text-slate-400 font-medium">Protect legal documents and cases with FaceID or Fingerprint</p>
+            </div>
+            <button 
+              onClick={async () => {
+                const newVal = !isBiometricEnabled;
+                if (newVal) {
+                  const success = await authenticateBiometrics();
+                  if (success) {
+                    setBiometricEnabled(true);
+                  }
+                } else {
+                  setBiometricEnabled(false);
+                  triggerHaptic('tap');
+                }
+              }}
+              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${isBiometricEnabled ? 'bg-indigo-600' : 'bg-slate-300 dark:bg-slate-700'}`}
+            >
+              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${isBiometricEnabled ? 'translate-x-6' : 'translate-x-0'}`}></div>
             </button>
           </div>
         </div>

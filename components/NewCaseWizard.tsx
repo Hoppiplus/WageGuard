@@ -115,28 +115,93 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
   };
 
   return (
-    <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 p-6 md:p-8 transition-all duration-500 animate-fade-in-up">
+    <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-slate-950/40 border border-slate-100 dark:border-slate-800 p-6 md:p-8 transition-all duration-500 animate-fade-in-up">
       
-      {/* Modern Stepper */}
+      {/* Visual Stepper & Progress Tracker */}
       <div className="mb-10">
-        <div className="flex justify-between items-end mb-3 px-2">
-            <span className={`text-xs font-bold uppercase tracking-wider transition-colors duration-300 ${step === 1 ? "text-royal-600 scale-105" : "text-slate-400"}`}>1. Profile</span>
-            <span className={`text-xs font-bold uppercase tracking-wider transition-colors duration-300 ${step === 2 ? "text-royal-600 scale-105" : "text-slate-400"}`}>2. Details</span>
-            <span className={`text-xs font-bold uppercase tracking-wider transition-colors duration-300 ${step === 3 ? "text-royal-600 scale-105" : "text-slate-400"}`}>3. Plan</span>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+              {step === 1 && "Employer & Issue Profile"}
+              {step === 2 && "Case Chronology Details"}
+              {step === 3 && "Strategic Guidance Plan"}
+            </h4>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">
+              {step === 3 
+                ? "Wizard fully complete" 
+                : `${3 - step} ${3 - step === 1 ? "step" : "steps"} remaining to diagnose case`}
+            </p>
+          </div>
+          <span className="text-[10px] font-black px-3 py-1 rounded-full bg-royal-50 dark:bg-royal-950/30 text-royal-600 dark:text-royal-400 border border-royal-100 dark:border-royal-900/20 shadow-xs select-none">
+            Step {step} of 3
+          </span>
         </div>
-        <div className="h-2 bg-slate-100 rounded-full overflow-hidden relative">
+
+        {/* High-Fidelity Stepper Grid */}
+        <div className="relative flex justify-between items-center mb-4">
+          {/* Progress Connection Line */}
+          <div className="absolute top-[18px] left-[15%] right-[15%] h-[2px] bg-slate-100 dark:bg-slate-800 z-0">
             <div 
-                className="absolute top-0 left-0 h-full bg-gradient-to-r from-royal-500 to-royal-600 rounded-full transition-all duration-700 ease-in-out shadow-[0_0_10px_rgba(79,70,229,0.3)]"
-                style={{ width: `${(step / 3) * 100}%` }}
+              className="h-full bg-royal-600 dark:bg-royal-500 transition-all duration-700 ease-in-out rounded-full"
+              style={{ width: `${((step - 1) / 2) * 100}%` }}
             />
+          </div>
+
+          {[
+            { num: 1, label: 'Profile', desc: 'Jurisdiction & Issues' },
+            { num: 2, label: 'Details', desc: 'Title & Chronology' },
+            { num: 3, label: 'Plan', desc: 'AI Diagnostic' }
+          ].map((s) => {
+            const isCompleted = step > s.num;
+            const isActive = step === s.num;
+            
+            return (
+              <div key={s.num} className="relative z-10 flex flex-col items-center flex-1">
+                <button
+                  disabled={s.num >= step} // Allow navigation backward to completed steps
+                  onClick={() => {
+                    if (s.num < step) {
+                      triggerHaptic('light-tap');
+                      setStep(s.num);
+                    }
+                  }}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-xs transition-all duration-300 border-2 select-none ${
+                    isCompleted 
+                      ? 'bg-royal-600 border-royal-600 text-white cursor-pointer hover:scale-105 active:scale-95' 
+                      : isActive 
+                        ? 'bg-white dark:bg-slate-900 border-royal-600 dark:border-royal-500 text-royal-600 dark:text-royal-400 ring-4 ring-royal-50 dark:ring-royal-950/40 shadow-md font-black scale-110' 
+                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'
+                  }`}
+                >
+                  {isCompleted ? (
+                    <CheckCircle className="w-5 h-5 text-white" strokeWidth={3} />
+                  ) : (
+                    <span>0{s.num}</span>
+                  )}
+                </button>
+                <span className={`text-[11px] font-black tracking-tight mt-2.5 transition-all duration-300 ${
+                  isActive 
+                    ? 'text-slate-900 dark:text-white scale-102' 
+                    : isCompleted 
+                      ? 'text-royal-600 dark:text-royal-400 hover:underline cursor-pointer' 
+                      : 'text-slate-400 dark:text-slate-600'
+                }`}>
+                  {s.label}
+                </span>
+                <span className="hidden sm:inline text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 max-w-[100px] text-center leading-tight">
+                  {s.desc}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {step === 1 && (
         <div className="space-y-8 animate-fade-in">
           <div>
-            <h3 className="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
-                <Building2 className="w-6 h-6 mr-3 text-royal-500" />
+            <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-6 flex items-center">
+                <Building2 className="w-6 h-6 mr-3 text-royal-500 dark:text-royal-400" />
                 {t('label_employer_type')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -150,18 +215,18 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
                   onClick={() => { triggerHaptic('light-tap'); setFormData({...formData, employerType: type.id as EmployerType, freezone: ''}); }}
                   className={`relative overflow-hidden group py-6 px-4 rounded-3xl border-2 flex flex-col items-center justify-center text-center transition-all duration-300 ${
                     formData.employerType === type.id 
-                      ? 'bg-royal-50 border-royal-500 text-royal-900 shadow-lg shadow-royal-500/10 scale-[1.02]' 
-                      : 'bg-white border-slate-100 text-slate-500 hover:border-royal-200 hover:bg-slate-50'
+                      ? 'bg-royal-50 dark:bg-royal-950/20 border-royal-500 text-royal-900 dark:text-white shadow-lg shadow-royal-500/10 scale-[1.02]' 
+                      : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:border-royal-200 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                   }`}
                 >
-                  <div className={`p-3 rounded-2xl mb-3 transition-colors ${formData.employerType === type.id ? 'bg-royal-200 text-royal-700' : 'bg-slate-100 text-slate-400'}`}>
+                  <div className={`p-3 rounded-2xl mb-3 transition-colors ${formData.employerType === type.id ? 'bg-royal-200 dark:bg-royal-900 text-royal-700 dark:text-royal-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500'}`}>
                       <type.icon className="w-6 h-6" strokeWidth={2} />
                   </div>
                   <span className="font-bold text-base">{type.label}</span>
-                  <span className="text-xs mt-1 opacity-70 font-medium">{type.sub}</span>
+                  <span className="text-xs mt-1 opacity-75 font-medium">{type.sub}</span>
                   {formData.employerType === type.id && (
-                      <div className="absolute top-3 right-3 text-royal-600 animate-scale-in">
-                          <CheckCircle className="w-5 h-5 fill-royal-100" />
+                      <div className="absolute top-3 right-3 text-royal-600 dark:text-royal-400 animate-scale-in">
+                          <CheckCircle className="w-5 h-5 fill-royal-100 dark:fill-royal-950" />
                       </div>
                   )}
                 </button>
@@ -171,12 +236,12 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
             {/* Freezone Selector */}
             {formData.employerType === 'Freezone' && (
                 <div className="mt-6 animate-slide-up">
-                    <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">Select Authority</label>
+                    <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">Select Authority</label>
                     <div className="relative">
                         <select
                             value={formData.freezone}
                             onChange={(e) => setFormData({...formData, freezone: e.target.value})}
-                            className="w-full p-4 pr-10 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 focus:ring-2 focus:ring-royal-500 focus:border-royal-500 outline-none transition font-bold appearance-none cursor-pointer hover:bg-white"
+                            className="w-full p-4 pr-10 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-royal-500 focus:border-royal-500 outline-none transition font-bold appearance-none cursor-pointer hover:bg-white dark:hover:bg-slate-700"
                         >
                             <option value="">Select specific Freezone...</option>
                             {FREEZONES.map(fz => <option key={fz} value={fz}>{fz}</option>)}
@@ -188,8 +253,8 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
           </div>
 
           <div>
-            <h3 className="text-xl font-extrabold text-slate-900 mb-6 flex items-center">
-                <AlertCircle className="w-6 h-6 mr-3 text-royal-500" />
+            <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-6 flex items-center">
+                <AlertCircle className="w-6 h-6 mr-3 text-royal-500 dark:text-royal-400" />
                 {t('label_issues')}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -199,12 +264,12 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
                   onClick={() => { triggerHaptic('light-tap'); toggleIssue(issue); }}
                   className={`text-left rtl:text-right px-5 py-4 rounded-2xl border transition-all duration-200 text-sm font-bold flex items-center justify-between group ${
                     formData.issues.includes(issue)
-                      ? 'bg-royal-900 text-white border-royal-900 shadow-md transform scale-[1.01]'
-                      : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'
+                      ? 'bg-royal-900 dark:bg-royal-800 text-white border-royal-900 dark:border-royal-800 shadow-md transform scale-[1.01]'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600'
                   }`}
                 >
                   {issue}
-                  {formData.issues.includes(issue) && <CheckCircle className="w-5 h-5 text-royal-300" />}
+                  {formData.issues.includes(issue) && <CheckCircle className="w-5 h-5 text-royal-300 dark:text-royal-400" />}
                 </button>
               ))}
             </div>
@@ -213,7 +278,7 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
           <button 
             disabled={formData.issues.length === 0 || (formData.employerType === 'Freezone' && !formData.freezone)}
             onClick={() => { triggerHaptic('tap'); setStep(2); }}
-            className="w-full bg-gradient-to-r from-royal-600 to-royal-800 disabled:from-slate-200 disabled:to-slate-300 disabled:text-slate-400 text-white font-bold py-5 rounded-2xl mt-4 hover:shadow-xl hover:shadow-royal-600/20 hover:scale-[1.01] transition-all active:scale-95 flex justify-center items-center text-lg"
+            className="w-full bg-gradient-to-r from-royal-600 to-royal-800 disabled:from-slate-200 disabled:to-slate-300 disabled:text-slate-400 dark:disabled:from-slate-800 dark:disabled:to-slate-900 text-white font-bold py-5 rounded-2xl mt-4 hover:shadow-xl hover:shadow-royal-600/20 hover:scale-[1.01] transition-all active:scale-95 flex justify-center items-center text-lg cursor-pointer"
           >
             Continue <ChevronRight className="w-6 h-6 ml-2 rtl:rotate-180" />
           </button>
@@ -223,25 +288,25 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
       {step === 2 && (
         <div className="space-y-6 animate-fade-in">
            <div>
-            <label className="block text-sm font-bold text-slate-900 mb-2 ml-1">Give your case a title</label>
+            <label className="block text-sm font-bold text-slate-900 dark:text-white mb-2 ml-1">Give your case a title</label>
             <input 
               type="text"
               placeholder="e.g. Unpaid Salary 2 Months"
-              className="w-full border border-slate-200 rounded-2xl p-5 focus:ring-2 focus:ring-royal-500 focus:border-royal-500 outline-none transition shadow-sm font-bold text-slate-900 placeholder:text-slate-300 bg-slate-50 focus:bg-white"
+              className="w-full border border-slate-200 dark:border-slate-800 rounded-2xl p-5 focus:ring-2 focus:ring-royal-500 focus:border-royal-500 outline-none transition shadow-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600 bg-slate-50 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-900"
               value={formData.title}
               onChange={e => setFormData({...formData, title: e.target.value})}
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-slate-900 mb-2 ml-1">{t('label_desc')}</label>
+            <label className="block text-sm font-bold text-slate-900 dark:text-white mb-2 ml-1">{t('label_desc')}</label>
             <textarea
-              className="w-full border border-slate-200 rounded-2xl p-5 h-48 focus:ring-2 focus:ring-royal-500 focus:border-royal-500 outline-none transition resize-none shadow-sm text-slate-900 placeholder:text-slate-300 leading-relaxed bg-slate-50 focus:bg-white font-medium"
+              className="w-full border border-slate-200 dark:border-slate-800 rounded-2xl p-5 h-48 focus:ring-2 focus:ring-royal-500 focus:border-royal-500 outline-none transition resize-none shadow-sm text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600 leading-relaxed bg-slate-50 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-900 font-medium"
               placeholder="Describe what happened..."
               value={formData.description}
               onChange={e => setFormData({...formData, description: e.target.value})}
             ></textarea>
-            <div className="flex items-start mt-4 text-xs text-slate-600 bg-royal-50 p-4 rounded-2xl border border-royal-100">
-                <Info className="w-5 h-5 mr-3 text-royal-500 flex-shrink-0" />
+            <div className="flex items-start mt-4 text-xs text-slate-600 dark:text-slate-400 bg-royal-50 dark:bg-royal-950/20 p-4 rounded-2xl border border-royal-105 dark:border-royal-900/30">
+                <Info className="w-5 h-5 mr-3 text-royal-500 dark:text-royal-400 flex-shrink-0" />
                 <span className="leading-relaxed font-medium">Tip: Include dates, specific amounts owed, and mention if you have a written contract. This helps the AI allow for a better assessment.</span>
             </div>
           </div>
@@ -249,14 +314,14 @@ const NewCaseWizard: React.FC<Props> = ({ onSave }) => {
           <div className="flex space-x-3">
               <button 
                 onClick={() => { triggerHaptic('tap'); setStep(1); }}
-                className="px-6 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition"
+                className="px-6 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer"
               >
                   Back
               </button>
               <button 
                 onClick={handleDiagnose}
                 disabled={loading || !formData.description || !formData.title}
-                className="flex-grow bg-royal-900 disabled:bg-slate-200 text-white font-bold py-5 rounded-2xl flex justify-center items-center shadow-xl shadow-royal-900/20 hover:bg-royal-800 transition-all active:scale-95 text-lg"
+                className="flex-grow bg-royal-900 dark:bg-royal-800 disabled:bg-slate-200 dark:disabled:bg-slate-800 text-white font-bold py-5 rounded-2xl flex justify-center items-center shadow-xl shadow-royal-900/20 hover:bg-royal-800 dark:hover:bg-royal-700 transition-all active:scale-95 text-lg cursor-pointer"
               >
                 {loading ? <Loader2 className="animate-spin mr-2" /> : t('btn_analyze')}
               </button>

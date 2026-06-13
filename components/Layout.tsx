@@ -31,6 +31,7 @@ import {
 import { useLanguage } from '../contexts/LanguageContext';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { useHaptic } from '../contexts/HapticContext';
+import { FloatingActions } from './FloatingActions';
 
 // Refined Logo: Shield with Gold Core
 const WageGuardLogo = () => (
@@ -290,7 +291,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <div className="hidden lg:block absolute -right-1.5 top-36 w-1.5 h-16 bg-slate-800 rounded-r.5 z-0"></div>
 
           {/* CHROME FRAME */}
-          <div className="lg:w-[410px] lg:h-[840px] lg:rounded-[4rem] lg:border-[12px] lg:border-slate-800 lg:bg-slate-900 lg:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden lg:flex lg:flex-col relative lg:ring-4 lg:ring-slate-900/60 w-full min-h-screen lg:min-h-0 bg-slate-50">
+          <div className="lg:w-[410px] lg:h-[840px] lg:rounded-[4rem] lg:border-[12px] lg:border-slate-800 lg:bg-slate-900 lg:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden lg:flex lg:flex-col relative lg:ring-4 lg:ring-slate-900/60 w-full min-h-screen lg:min-h-0 bg-slate-50 dark:bg-slate-950 dark:text-slate-100 transition-colors">
             
             {/* SCREEN REFLECTION/GLARE OVERLAY (Only visible on desktop) */}
             <div className="hidden lg:block pointer-events-none absolute inset-0 z-30 rounded-[3.2rem] bg-gradient-to-tr from-transparent via-white/[0.03] to-white/[0.12]" />
@@ -382,7 +383,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             )}
 
             {/* INTERNAL PHONE VIEWER (CONTENT BOX) */}
-            <div className="flex-grow overflow-y-auto relative bg-slate-50/50 flex flex-col h-full no-scrollbar">
+            <div className="flex-grow overflow-y-auto relative bg-slate-50/50 dark:bg-slate-950/95 flex flex-col h-full no-scrollbar transition-colors">
               
               {/* Expiration Banner - Shows before expiry */}
               {isPremium && daysRemaining <= 3 && !isExpired && (
@@ -501,7 +502,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             {/* NATIVE BOTTOM NAVIGATION NAVIGATION WITH HAPTICS */}
             <nav className="absolute bottom-11 left-0 right-0 z-40 px-3 pointer-events-none">
               <div className="max-w-md mx-auto pointer-events-auto">
-                <div className="bg-white/85 shadow-2xl border border-white/40 rounded-2xl flex justify-between items-center py-2 px-5 backdrop-blur-md">
+                <div className="bg-white/85 dark:bg-slate-900/90 shadow-2xl border border-white/40 dark:border-slate-800/80 rounded-2xl flex justify-between items-center py-2 px-5 backdrop-blur-md">
                   
                   <div onClick={() => handleNavClick('/')} className="group flex flex-col items-center cursor-pointer">
                     <div className={`p-2 rounded-xl transition-all duration-300 ${isActive('/') ? 'bg-royal-50/80 text-royal-700' : 'text-slate-400 hover:text-slate-600'}`}>
@@ -537,6 +538,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 </div>
               </div>
             </nav>
+            
+            {/* PERSISTENT FLOATING QUICK ACTION BUTTON SPEED DIAL */}
+            <FloatingActions />
             
           </div>
         </div>
