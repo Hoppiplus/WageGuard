@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MyHaq</string>
+    <string name="title_activity_main">MyHaq</string>
+    <string name="package_name">com.myhaq.app</string>
+    <string name="custom_url_scheme">com.myhaq.app</string>
+</resources>
